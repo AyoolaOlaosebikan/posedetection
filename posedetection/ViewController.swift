@@ -157,7 +157,7 @@ class ViewController: UIViewController {
     }
     
     func uploadDataToServer(data: [String: Any]) {
-        guard let url = URL(string: "http://your-server-address/upload") else {
+        guard let url = URL(string: "http://0.0.0.0:8000/upload_pose") else {
             print("invalid url")
             return
         }
@@ -195,7 +195,7 @@ class ViewController: UIViewController {
     }
     
     func trainModel() {
-        guard let url = URL(string: "http://<YOUR_SERVER_IP>:<PORT>/train_model") else {
+        guard let url = URL(string: "http://0.0.0.0:8000/train_model") else {
             print("Invalid server URL")
             return
         }
@@ -220,7 +220,7 @@ class ViewController: UIViewController {
     }
     
     func predictPose(features: [String: Double]) {
-        guard let url = URL(string: "http://<YOUR_SERVER_IP>:<PORT>/predict_pose") else {
+        guard let url = URL(string: "http://0.0.0.0:8000/predict_pose") else {
             print("Invalid server URL")
             return
         }
