@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from pydantic import BaseModel
 import json
 import numpy as np
@@ -13,11 +13,12 @@ app = FastAPI()
 # In-memory storage
 pose_data = []
 model = None
-model_type = None
+
 
 class PoseData(BaseModel):
     features: dict
     label: str
+
 
 @app.post("/upload_pose")
 async def upload_pose(request: Request):
@@ -25,9 +26,10 @@ async def upload_pose(request: Request):
     pose_data.append(data)
     return {"message": "Pose data received", "data": data}
 
+
 @app.post("/train_model")
 def train_model(model_type: str):
-    global model, model_type
+    global model
     if not pose_data:
         return {"error": "No data available for training"}
 
@@ -54,16 +56,18 @@ def train_model(model_type: str):
     accuracy = model.score(X_test, y_test)
     return {"message": "Model trained successfully", "accuracy": accuracy}
 
+
 @app.post("/predict_pose")
 def predict_pose(features: dict):
     global model
     if not model:
         return {"error": "No model trained yet"}
-    
+
     # Convert features to a NumPy array
     feature_vector = np.array(list(features.values())).reshape(1, -1)
     prediction = model.predict(feature_vector)
     return {"prediction": prediction[0]}
+
 
 @app.post("/compare_models")
 def compare_models():
