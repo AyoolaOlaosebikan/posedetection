@@ -222,7 +222,10 @@ class ViewController: UIViewController {
 
         // Convert data to JSON
         print("Data to upload: \(data)")
-        guard let jsonData = prepareJSON(from: data) else { return }
+        guard let jsonData = prepareJSON(from: data) else {
+            print("JSON prep failed")
+            return
+        }
         
         request.httpBody = jsonData
 
@@ -242,12 +245,16 @@ class ViewController: UIViewController {
     
     func prepareJSON(from data: [String: Any]) -> Data? {
         var sanitizedData = data
-        for (key, value) in data {
-            if let number = value as? Double, number.isNaN {
-                sanitizedData[key] = 0 // Replace NaN with 0 or another default value
+        // Sanitize nested data (like "features")
+        if var features = data["features"] as? [String: Any] {
+            for (key, value) in features {
+                if let number = value as? Double, number.isNaN {
+                    features[key] = 0.0 // Replace NaN with 0.0 or a default value
+                }
             }
+            sanitizedData["features"] = features
         }
-        
+    
         do {
             return try JSONSerialization.data(withJSONObject: data, options: [])
         } catch {
