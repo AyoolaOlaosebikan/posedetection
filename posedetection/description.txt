@@ -1,0 +1,38 @@
+
+1. Pose Detection and Classification:
+
+The app uses machine learning to detect and classify various bodybuilding poses from camera input. The goal is for users to refine their poses to match the desired form and alignment. This is done by feeding the camera input through the machine learning model, which classifies the pose into categories such as “Front Double Biceps,” “Side Chest,” “Back Double Biceps,” etc.
+
+2. Model Comparison and Evaluation:
+
+The app supports comparing the performance of different machine learning models that are used for pose detection. It likely uses models such as Random Forest, XGBoost, and K-Nearest Neighbors (KNN) for pose classification.
+    •    The models are trained using data that includes labeled bodybuilding poses.
+    •    Once trained, the models are evaluated based on accuracy or other metrics, which are then compared.
+    •    The app fetches the results of these comparisons from a server and displays them to the user in a popup view, showing which model performs best.
+
+3. Real-Time Feedback:
+
+Users receive real-time feedback as they pose in front of the camera. Based on their posture and alignment, they can see if their pose matches the target pose. The feedback can help users adjust their form to improve their performance.
+
+4. Interactive Experience:
+
+The app may include an interactive experience where users refine their poses by progressing through challenges. For example, after the user completes a pose correctly, they might move on to a different pose or get scored based on how well they did.
+
+5. User Interface:
+
+    •    The app has a button that triggers the comparison between different models, and upon completion of this comparison, it shows the results in a popup alert.
+    •    The popup provides the comparison results between models (e.g., Random Forest vs. KNN) with metrics like accuracy.
+
+6. Backend Integration:
+
+The app makes HTTP requests to a backend server (likely a Flask or FastAPI app) to get data about model comparisons, including:
+    •    Best model: The model with the best performance in terms of accuracy.
+    •    Comparison results: The performance (e.g., accuracy) of each model.
+
+This data is then used to update the UI (e.g., in the popup alert) to inform the user of the model comparison results.
+
+7. Error Handling:
+
+The app is designed to handle cases where there are issues with the models or data. For instance, if there are unseen labels or any issue during model training or evaluation, the app gracefully reports the issue back to the user.
+
+(fromt chatgpt)

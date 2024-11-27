@@ -16,11 +16,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kuf-hG-nHi">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kuf-hG-nHi">
                                 <rect key="frame" x="0.0" y="59" width="393" height="503"/>
                                 <color key="backgroundColor" systemColor="tertiaryLabelColor"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NK0-3m-dUB">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NK0-3m-dUB">
                                 <rect key="frame" x="154" y="740" width="85" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Confirm"/>
@@ -28,18 +28,42 @@
                                     <action selector="confirmPoseLabel:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1Vl-4o-BcR"/>
                                 </connections>
                             </button>
-                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s9z-Hy-bwx">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GV4-Y0-TIN">
+                                <rect key="frame" x="123" y="271" width="146" height="114"/>
+                                <color key="backgroundColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.27543048469387754" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="114" id="aAj-YH-jed"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="50"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s9z-Hy-bwx">
                                 <rect key="frame" x="0.0" y="570" width="393" height="162"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="162" id="twA-ag-p4Y"/>
                                 </constraints>
                             </pickerView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WoN-uV-mFh">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WoN-uV-mFh">
                                 <rect key="frame" x="29" y="740" width="62" height="35"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="Train"/>
                                 <connections>
                                     <action selector="trainButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fDg-z1-d9C"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Press &quot;Train&quot; for Predictions" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GG0-Nz-DCj">
+                                <rect key="frame" x="35" y="797" width="342" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0mD-2J-4u9">
+                                <rect key="frame" x="278" y="740" width="94" height="35"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Compare"/>
+                                <connections>
+                                    <action selector="compareButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="z0P-7t-FgI"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -49,19 +73,29 @@
                             <constraint firstItem="WoN-uV-mFh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="29" id="487-Tn-1j3"/>
                             <constraint firstItem="s9z-Hy-bwx" firstAttribute="centerX" secondItem="NK0-3m-dUB" secondAttribute="centerX" id="5ab-yq-03Q"/>
                             <constraint firstItem="kuf-hG-nHi" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DHX-Dk-mCc"/>
+                            <constraint firstItem="GG0-Nz-DCj" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="DsN-zs-M4l"/>
                             <constraint firstItem="WoN-uV-mFh" firstAttribute="top" secondItem="s9z-Hy-bwx" secondAttribute="bottom" constant="8" id="HG3-zi-PzK"/>
+                            <constraint firstItem="GG0-Nz-DCj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="35" id="LRm-5O-gDy"/>
                             <constraint firstItem="s9z-Hy-bwx" firstAttribute="top" secondItem="kuf-hG-nHi" secondAttribute="bottom" constant="8" id="NhT-DP-kGa"/>
+                            <constraint firstItem="0mD-2J-4u9" firstAttribute="baseline" secondItem="NK0-3m-dUB" secondAttribute="baseline" id="W1t-5s-k2h"/>
                             <constraint firstItem="kuf-hG-nHi" firstAttribute="leading" secondItem="s9z-Hy-bwx" secondAttribute="leading" id="XPK-Tv-Ktf"/>
+                            <constraint firstItem="GV4-Y0-TIN" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="123" id="cnI-9b-GqV"/>
                             <constraint firstItem="kuf-hG-nHi" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="emM-m6-s6e"/>
                             <constraint firstItem="kuf-hG-nHi" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="gEi-Ny-z1H"/>
+                            <constraint firstItem="0mD-2J-4u9" firstAttribute="leading" secondItem="NK0-3m-dUB" secondAttribute="trailing" constant="39" id="h5H-ty-fhR"/>
                             <constraint firstItem="WoN-uV-mFh" firstAttribute="baseline" secondItem="NK0-3m-dUB" secondAttribute="baseline" id="khS-uu-7Cw"/>
+                            <constraint firstItem="GG0-Nz-DCj" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="m31-04-bWs"/>
+                            <constraint firstItem="GV4-Y0-TIN" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="212" id="oPO-f5-ELj"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="WoN-uV-mFh" secondAttribute="bottom" constant="43" id="rsK-TI-FQx"/>
                             <constraint firstItem="kuf-hG-nHi" firstAttribute="trailing" secondItem="s9z-Hy-bwx" secondAttribute="trailing" id="vWE-Tr-e0D"/>
+                            <constraint firstItem="GV4-Y0-TIN" firstAttribute="centerX" secondItem="s9z-Hy-bwx" secondAttribute="centerX" id="vzi-LW-V8A"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="cameraPreviewView" destination="kuf-hG-nHi" id="rea-2L-kNe"/>
+                        <outlet property="countdown" destination="GV4-Y0-TIN" id="mol-a4-GCQ"/>
                         <outlet property="posePicker" destination="s9z-Hy-bwx" id="e75-z2-bB0"/>
+                        <outlet property="predictionLabel" destination="GG0-Nz-DCj" id="KEX-Ob-xxx"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

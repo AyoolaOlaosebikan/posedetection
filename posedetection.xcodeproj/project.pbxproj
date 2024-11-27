@@ -19,6 +19,8 @@
 		8C6FE0D82CEE574200879EF3 /* posemodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8C6FE0D62CEE574100879EF3 /* posemodel.xcdatamodeld */; };
 		8CDE5A4B2CF4445500E2B39F /* poselearning.py in Resources */ = {isa = PBXBuildFile; fileRef = 8CDE5A4A2CF4445500E2B39F /* poselearning.py */; };
 		8CDE5A4D2CF4446800E2B39F /* poselearning.py in Resources */ = {isa = PBXBuildFile; fileRef = 8CDE5A4C2CF4446800E2B39F /* poselearning.py */; };
+		8CDE5A4F2CF6A11900E2B39F /* teammembers.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8CDE5A4E2CF6A11900E2B39F /* teammembers.txt */; };
+		8CDE5A512CF6A15200E2B39F /* description.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8CDE5A502CF6A15200E2B39F /* description.txt */; };
 		8CE32AB12CF0110B00AF5197 /* Vision.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE32AB02CF0110B00AF5197 /* Vision.framework */; };
 /* End PBXBuildFile section */
 
@@ -56,6 +58,8 @@
 		8C6FE0D72CEE574200879EF3 /* posemodel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = posemodel.xcdatamodel; sourceTree = "<group>"; };
 		8CDE5A4A2CF4445500E2B39F /* poselearning.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = poselearning.py; path = posedetection/poselearning.py; sourceTree = "<group>"; };
 		8CDE5A4C2CF4446800E2B39F /* poselearning.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = poselearning.py; sourceTree = "<group>"; };
+		8CDE5A4E2CF6A11900E2B39F /* teammembers.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = teammembers.txt; sourceTree = "<group>"; };
+		8CDE5A502CF6A15200E2B39F /* description.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = description.txt; sourceTree = "<group>"; };
 		8CE32AB02CF0110B00AF5197 /* Vision.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vision.framework; path = System/Library/Frameworks/Vision.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -109,6 +113,8 @@
 		8C6FE0A52CEE551B00879EF3 /* posedetection */ = {
 			isa = PBXGroup;
 			children = (
+				8CDE5A4E2CF6A11900E2B39F /* teammembers.txt */,
+				8CDE5A502CF6A15200E2B39F /* description.txt */,
 				8C6FE0A62CEE551B00879EF3 /* AppDelegate.swift */,
 				8CDE5A4C2CF4446800E2B39F /* poselearning.py */,
 				8C6FE0A82CEE551B00879EF3 /* SceneDelegate.swift */,
@@ -255,7 +261,9 @@
 				8CDE5A4D2CF4446800E2B39F /* poselearning.py in Resources */,
 				8C6FE0B02CEE551D00879EF3 /* Assets.xcassets in Resources */,
 				8CDE5A4B2CF4445500E2B39F /* poselearning.py in Resources */,
+				8CDE5A4F2CF6A11900E2B39F /* teammembers.txt in Resources */,
 				8C6FE0B32CEE551D00879EF3 /* Base in Resources */,
+				8CDE5A512CF6A15200E2B39F /* description.txt in Resources */,
 				8C6FE0AE2CEE551C00879EF3 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

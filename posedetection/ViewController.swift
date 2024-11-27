@@ -8,19 +8,61 @@
 import UIKit
 import Vision
 import AVFoundation
+import Foundation
 
 class ViewController: UIViewController {
     
     let poseRequest = VNDetectHumanBodyPoseRequest()
     @IBOutlet weak var cameraPreviewView: UIView!
+    @IBOutlet weak var predictionLabel: UILabel!
     @IBOutlet weak var posePicker: UIPickerView!
     @IBAction func confirmPoseLabel(_ sender: UIButton) {
-        print("balls")
-        savePoseData(label: selectedPose)
+        print("Countdown")
+        countdownTime = 3
+        startCountdown()
+       // savePoseData(label: selectedPose)
     }
     @IBAction func trainButtonPressed(_ sender: Any) {
-        trainModel()
+        let actionSheet = UIAlertController(title: "Select Model", message: "Choose a machine learning model to use", preferredStyle: .actionSheet)
+        
+        // Add actions for each model type
+        let randomForestAction = UIAlertAction(title: "Random Forest", style: .default) { _ in
+            self.trainModel(modelType: "random_forest")
+        }
+        let xgboostAction = UIAlertAction(title: "XGBoost", style: .default) { _ in
+            self.trainModel(modelType: "xgboost")
+        }
+        let knnAction = UIAlertAction(title: "K-Nearest Neighbors", style: .default) { _ in
+            self.trainModel(modelType: "knn")
+        }
+        
+        // Add a cancel action
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        // Add actions to the action sheet
+        actionSheet.addAction(randomForestAction)
+        actionSheet.addAction(xgboostAction)
+        actionSheet.addAction(knnAction)
+        actionSheet.addAction(cancelAction)
+        
+        // Present the action sheet
+        self.present(actionSheet, animated: true, completion: nil)
     }
+    @IBOutlet weak var countdown: UILabel!
+    @IBAction func compareButtonTapped(_ sender: UIButton) {
+            fetchModelComparisonData { result in
+                switch result {
+                case .success(let response):
+                    // Call method to display data in a popup
+                    DispatchQueue.main.async {
+                        self.showPopup(with: response)
+                    }
+                case .failure(let error):
+                    // Handle the error
+                    print("Error fetching data: \(error.localizedDescription)")
+                }
+            }
+        }
     
     var currentPoseObservation: VNHumanBodyPoseObservation?
 
@@ -46,6 +88,9 @@ class ViewController: UIViewController {
     var detectedFaceRectangleShapeLayer: CAShapeLayer?
     var detectedEyebrowRectangleShapeLayer: CAShapeLayer?
     var captureDeviceResolution: CGSize = CGSize()
+    
+    var countdownTimer: Timer?
+    var countdownTime = 3
 
     private var detectionRequests: [VNDetectHumanBodyPoseRequest]?
     private var trackingRequests: [VNTrackObjectRequest]?
@@ -60,84 +105,16 @@ class ViewController: UIViewController {
         //self.session = self.setupAVCaptureSession()
         //self.prepareVisionRequest()
         //self.session?.startRunning()
+        countdown.isHidden = true
+        countdown.layer.cornerRadius = 20
+        countdown.layer.masksToBounds = true
 
         posePicker.delegate = self
         posePicker.dataSource = self
         // Do any additional setup after loading the view.
     }
-//    override func didReceiveMemoryWarning() {
-//        super.didReceiveMemoryWarning()
-//    }
-//    
-//    // Ensure that the interface stays locked in Portrait.
-//    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-//        return .portrait
-//    }
-//    
-//    // Ensure that the interface stays locked in Portrait.
-//    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-//        return .portrait
-//    }
-//
-//    fileprivate func prepareVisionRequest() {
-//        
-//        self.trackingRequests = []
-//        
-//        // create a detection request that processes an image and returns face features
-//        // completion handler does not run immediately, it is run
-//        // after a face is detected
-//        let bodyDetectionRequest = VNDetectHumanBodyPoseRequest { [weak self] request, error in
-//            self?.bodyDetectionCompletionHandler(request: request, error: error)
-//        }
-//        // Save this detection request for later processing
-//        self.detectionRequests = [bodyDetectionRequest]
-//        
-//        // setup the tracking of a sequence of features from detection
-//        self.sequenceRequestHandler = VNSequenceRequestHandler()
-//        
-//        // setup drawing layers for showing output of body detection
-//        self.setupVisionDrawingLayers()
-//    }
-//    
-//    func bodyDetectionCompletionHandler(request:VNRequest, error: Error?){
-//        // any errors? If yes, show and try to keep going
-//        if error != nil {
-//            print("bodyDetection error: \(String(describing: error)).")
-//        }
-//        
-//        // see if we can get any face features, this will fail if no faces detected
-//        // try to save the face observations to a results vector
-//        guard let bodyDetectionRequest = request as? VNDetectHumanBodyPoseRequest,
-//            let results = bodyDetectionRequest.results as? [VNHumanBodyPoseObservation] else {
-//                return
-//        }
-//        
-//        if !results.isEmpty{
-//            print("Initial body found... setting up tracking.")
-//            
-//            
-//        }
-//        
-//        // if we got here, then a face was detected and we have its features saved
-//        // The above face detection was the most computational part of what we did
-//        // the remaining tracking only needs the results vector of face features
-//        // so we can process it in the main queue (because we will us it to update UI)
-//        DispatchQueue.main.async {
-//            // Add the body limbs to the tracking list
-//            for observation in results {
-//                let bodyTrackingRequest = VNTrackObjectRequest(detectedObjectObservation: observation)
-//                // the array starts empty, but this will constantly add to it
-//                // since on the main queue, there are no race conditions
-//                // everything is from a single thread
-//                // once we add this, it kicks off tracking in another function
-//                self.trackingRequests?.append(bodyTrackingRequest)
-//                
-//                // NOTE: if the initial face detection is actually not a face,
-//                // then the app will continually mess up trying to perform tracking
-//            }
-//        }
-//        
-//    }
+
+    
     private func handlePoseObservation(_ observation: VNHumanBodyPoseObservation) {
         guard let recognizedPoints = try? observation.recognizedPoints(.all) else { return }
         
@@ -146,10 +123,10 @@ class ViewController: UIViewController {
         let leftShoulder = recognizedPoints[.leftShoulder]
 
         if let wrist = leftWrist?.location,
-           let elbow = leftElbow?.location,
-           let shoulder = leftShoulder?.location {
-            let angle = calculateAngle(pointA: wrist, pointB: elbow, pointC: shoulder)
-            print("Left Arm Angle: \(angle)°")
+        let elbow = leftElbow?.location,
+        let shoulder = leftShoulder?.location {
+        let angle = calculateAngle(pointA: wrist, pointB: elbow, pointC: shoulder)
+        print("Left Arm Angle: \(angle)°")
         }
     }
     
@@ -173,11 +150,31 @@ class ViewController: UIViewController {
         dot.layer.cornerRadius = 2.5
         view.addSubview(dot)
     }
-    
+    func startCountdown() {
+        // Update UI with initial time remaining
+        countdown.isHidden = false
+        // Invalidate any existing timer if it exists
+        countdownTimer?.invalidate()
+        countdown.text = String(countdownTime)
+
+        // Set up a new timer to fire every second
+        countdownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateCountdown), userInfo: nil, repeats: true)
+    }
+    @objc func updateCountdown() {
+            if countdownTime > 0 {
+                countdownTime -= 1
+                countdown.text = String(countdownTime)
+            } else {
+                countdownTimer?.invalidate() // Stop the timer
+                savePoseData(label: selectedPose) // Save pose data after countdown finishes
+                countdown.isHidden = true
+                print("Pose saved")
+            }
+        }
     func savePoseData(label: String) {
-    print("erm")
-        guard let poseObservation = currentPoseObservation else { 
-            print("why why why why wy")
+   // print("erm")
+        guard let poseObservation = currentPoseObservation else {
+            //print("why why why why wy")
             return
         }
         let features = extractFeatures(from: poseObservation)
@@ -243,46 +240,86 @@ class ViewController: UIViewController {
         task.resume()
     }
     
+    func convertToDecimal(_ value: Any) -> Any {
+        if let dict = value as? [String: Any] {
+            var newDict = [String: Any]()
+            for (key, val) in dict {
+                newDict[key] = convertToDecimal(val)  // Recurse through the dictionary
+            }
+            return newDict
+        } else if let array = value as? [Any] {
+            return array.map { convertToDecimal($0) }  // Recurse through the array
+        } else if let number = value as? Double {
+            return Decimal(number)  // Convert Double to Decimal
+        }
+        return value  // Return the value as-is if it's not a Double
+    }
+    
     func prepareJSON(from data: [String: Any]) -> Data? {
         var sanitizedData = data
         // Sanitize nested data (like "features")
         if var features = data["features"] as? [String: Any] {
             for (key, value) in features {
-                if let number = value as? Double, number.isNaN {
-                    features[key] = 0.0 // Replace NaN with 0.0 or a default value
+                if let number = value as? Double {
+                    if number.isNaN {
+                        print("cleaning \(features[key] ?? 0)")
+                        features[key] = Decimal(0.0) // Replace NaN with 0.0 or a default value
+                        print("nan value is now \(features[key] ?? 0)")
+                    } else {
+                        features[key] = Decimal(number)
+                    }
                 }
             }
             sanitizedData["features"] = features
         }
-    
+        
+        sanitizedData = convertToDecimal(sanitizedData) as! [String: Any]
+        
         do {
-            return try JSONSerialization.data(withJSONObject: data, options: [])
+            return try JSONSerialization.data(withJSONObject: sanitizedData, options: [])
         } catch {
             print("Failed to encode JSON: \(error)")
             return nil
         }
     }
     
-    func trainModel() {
-        guard let url = URL(string: "http://10.9.159.255:8000/train_model") else {
+    func trainModel(modelType: String) {
+        guard let url = URL(string: "http://10.9.159.255:8000/train_model?model_type=\(modelType)") else {
             print("Invalid server URL")
             return
         }
-
+        
         // Create URLRequest
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-
+//        let modelType = "random_forest"
+//        let body: [String: Any] = ["model_type": modelType]
+//        do {
+//            let jsonData = try JSONSerialization.data(withJSONObject: body, options: [])
+//            request.httpBody = jsonData
+//        } catch {
+//            print("Error encoding JSON: \(error)")
+//            return
+//        }
+        
+        // Set content type
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         // Send the request
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error training model: \(error)")
                 return
             }
-
-            if let data = data,
-               let responseDict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                print("Training response: \(responseDict)")
+            
+            if let data = data {
+                do {
+                    if let responseDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        print("Training response: \(responseDict)")
+                    }
+                } catch {
+                    print("Error decoding response JSON: \(error)")
+                }
             }
         }
         task.resume()
@@ -295,7 +332,12 @@ class ViewController: UIViewController {
         }
 
         // Prepare JSON data
+        
         let predictionData = ["features": features]
+        if !validateFeatures(features) {
+            //print("Invalid features detected: \(features)")
+            return
+        }
         guard let jsonData = try? JSONSerialization.data(withJSONObject: predictionData) else {
             print("Failed to encode JSON")
             return
@@ -316,11 +358,33 @@ class ViewController: UIViewController {
 
             if let data = data,
                let responseDict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                print("Prediction response: \(responseDict)")
+                //print("Prediction response: \(responseDict["prediction"] ?? "nun")")
+                
+                DispatchQueue.main.async {
+                    if let prediction = responseDict["prediction"] as? [String],
+                    let firstPrediction = prediction.first {
+                    let cleanedPrediction = firstPrediction.trimmingCharacters(in: CharacterSet(charactersIn: "() \n"))
+                        if (cleanedPrediction != "") {
+                            self.predictionLabel.text = cleanedPrediction
+                        } else {
+                            self.predictionLabel.text = "No pose identified"
+                        }
+                    }
+                }
             }
         }
         task.resume()
     }
+    
+    func validateFeatures(_ features: [String: Double]) -> Bool {
+        for (_, value) in features {
+            if value.isNaN || value.isInfinite {
+                return false
+            }
+        }
+        return true
+    }
+    
     private func setupCamera() {
         let captureSession = AVCaptureSession()
             captureSession.sessionPreset = .medium
@@ -356,56 +420,82 @@ class ViewController: UIViewController {
 
 
     private func processImage(_ pixelBuffer: CVPixelBuffer) {
-        print("hiiiooo")
+        //print("hiiiooo")
         let requestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
         let request = VNDetectHumanBodyPoseRequest()
         
         do {
             try requestHandler.perform([request])
             if let results = request.results {
-                print("Detected \(results.count) pose(s)")
+               // print("Detected \(results.count) pose(s)")
                 if let firstPose = results.first {
                     currentPoseObservation = firstPose
-                    print("Pose detected: \(firstPose)")
+                    guard let poseObservation = currentPoseObservation else {
+                        //print("why why why why wy")
+                        return
+                    }
+                    let features = extractFeatures(from: poseObservation)
+                    predictPose(features: features)
+                    
+               //     print("Pose detected: \(firstPose)")
                 } else {
-                    print("No pose in results")
+                //    print("No pose in results")
                 }
             } else {
-                print("No results from request")
+               // print("No results from request")
             }
         } catch {
             print("Error detecting pose: \(error)")
         }
     }
-    
-    private func drawKeypoints(_ points: [VNRecognizedPoint]) {
-        for point in points {
-            if point.confidence > 0.5 {
-                let normalized = point.location
-                let x = normalized.x * cameraPreviewView.bounds.width
-                let y = (1 - normalized.y) * cameraPreviewView.bounds.height // Flip y-axis
-                let circleView = UIView(frame: CGRect(x: x, y: y, width: 10, height: 10))
-                circleView.backgroundColor = .red
-                circleView.layer.cornerRadius = 5
-                cameraPreviewView.addSubview(circleView)
-            }
-        }
+    func showPopup(with response: String) {
+        // Create an alert to display the raw JSON response
+        let alertController = UIAlertController(title: "Model Comparison", message: response, preferredStyle: .alert)
+        
+        // Add "OK" button to close the popup
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+        
+        // Present the alert
+        self.present(alertController, animated: true, completion: nil)
     }
 
-    private func drawCircle(at point: CGPoint) {
-        let circleLayer = CAShapeLayer()
-        circleLayer.frame = CGRect(x: point.x - 5, y: point.y - 5, width: 10, height: 10)
-        circleLayer.cornerRadius = 5
-        circleLayer.backgroundColor = UIColor.red.cgColor
-        cameraPreviewView.layer.addSublayer(circleLayer)
-    }
-
-    private func clearLandmarkLayers() {
-        for sublayer in cameraPreviewView.layer.sublayers ?? [] {
-            if let shapeLayer = sublayer as? CAShapeLayer {
-                shapeLayer.removeFromSuperlayer()
+    func fetchModelComparisonData(completion: @escaping (Result<String, Error>) -> Void) {
+        let urlString = "http://10.9.159.255:8000/compare_models"
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        // Perform the GET request
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            // Handle errors
+            if let error = error {
+                print("Error fetching data: \(error.localizedDescription)")
+                completion(.failure(error))  // Call completion handler with error
+                return
+            }
+            
+            // Ensure we have data
+            guard let data = data else {
+                print("No data received")
+                return
+            }
+            
+            // Convert the data to a string and pass it back
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Received response: \(jsonString)")
+                completion(.success(jsonString))  // Return the raw JSON string
+            } else {
+                print("Failed to convert data to string")
+                completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert data to string"])))
             }
         }
+        
+        task.resume()  // Start the task
     }
 }
 
@@ -416,8 +506,9 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             return
         }
+        
         processImage(pixelBuffer)
-        print("process image")
+        //print("process image")
     }
 }
 extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
@@ -432,6 +523,10 @@ extension ViewController: UIPickerViewDelegate, UIPickerViewDataSource {
         selectedPose = poses[row]
     }
 }
+
+
+
+
 ////from eric larson
 //extension UIViewController{
 //    
